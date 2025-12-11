@@ -7,9 +7,10 @@ db_path = os.path.join(base_dir, "backend", "database.sqlite3")
 
 user_id = add_user_with_image(
     db_path=db_path,
-    name="Mati A",
-    qr_code="MATI123",              # to będzie treść Twojego kodu QR
-    image_path=r"C:\Users\mateo\OneDrive\Pulpit\face-qr-auth-system\mati.jpg"
+    name="username",
+    qr_code="qr_number_code",           
+    image_path=r"C:\Users\mateo\OneDrive\Pulpit\face-qr-auth-system\image.jpg"
 )
+
 
 print("Dodano usera o ID:", user_id)
