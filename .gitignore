@@ -1,0 +1,107 @@
+############################
+# Python / Flask / Backend #
+############################
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual envs
+venv/
+env/
+.venv/
+.env/
+ENV/
+.python-version
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.log
+.pytest_cache/
+
+# Type checkers / linters
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local settings / secrets (common patterns)
+*.env
+*.env.*
+*.ini
+*.cfg
+*.local
+
+######################
+# Project‑specific   #
+######################
+
+# SQLite / local DBs
+*.sqlite3
+*.db
+backend/database.sqlite3
+
+# Logs and temp
+logs/
+tmp/
+temp/
+*.tmp
+
+######################
+# OS / Editors       #
+######################
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.lnk
+
+# VS Code / JetBrains
+.vscode/
+.idea/
+
+# Others
+*.swp
+*.swo
+
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>System Autoryzacji QR + Twarz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>System Autoryzacji Pracowników</h1>
+      <p class="subtitle">Kod QR + Biometria z testem żywotności (mrugnięcie)</p>
+
+      <div class="panel">
+        <div class="video-wrapper">
+          <video id="camera" autoplay playsinline></video>
+          <canvas id="captureCanvas" style="display: none"></canvas>
+          <div id="overlay" class="overlay"></div>
+        </div>
+
+        <div class="controls">
+          <label for="qrInput">Kod QR pracownika:</label>
+          <input id="qrInput" type="text" placeholder="Wprowadź lub zeskanuj kod QR" />
+
+          <button id="startVerificationBtn">Rozpocznij weryfikację</button>
+
+          <p id="statusMessage" class="status-message">
+            Ustaw się przed kamerą i przygotuj się do mrugnięcia.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+  </html>
+
+

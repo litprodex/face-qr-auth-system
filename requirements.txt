@@ -1,0 +1,7 @@
+Flask
+face-recognition
+opencv-python
+mediapipe
+numpy
+
+
