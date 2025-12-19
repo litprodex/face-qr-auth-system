@@ -18,18 +18,25 @@
         </div>
 
         <div class="controls">
-          <label for="qrInput">Kod QR pracownika:</label>
-          <input id="qrInput" type="text" placeholder="Wprowadź lub zeskanuj kod QR" />
+          <label for="qrInput">Kod QR pracownika (zostanie odczytany z kamery):</label>
+          <input
+            id="qrInput"
+            type="text"
+            placeholder="Trzymaj kartę z kodem QR przed kamerą..."
+            readonly
+          />
 
-          <button id="startVerificationBtn">Rozpocznij weryfikację</button>
+          <button id="startVerificationBtn" disabled>Rozpocznij weryfikację</button>
 
           <p id="statusMessage" class="status-message">
-            Ustaw się przed kamerą i przygotuj się do mrugnięcia.
+            Uruchamiam kamerę i szukam kodu QR. Trzymaj kod QR w polu widzenia.
           </p>
         </div>
       </div>
     </div>
 
+    <!-- Biblioteka do odczytu kodów QR z obrazu -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
   </html>

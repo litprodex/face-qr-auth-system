@@ -5,6 +5,9 @@ const statusMessage = document.getElementById("statusMessage");
 const overlay = document.getElementById("overlay");
 const qrInput = document.getElementById("qrInput");
 
+let qrScanInterval = null;
+let scannedQrCode = null;
+
 async function initCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -12,6 +15,15 @@ async function initCamera() {
       audio: false,
     });
     video.srcObject = stream;
+
+    // Gdy kamera będzie gotowa, uruchamiamy skanowanie QR
+    video.addEventListener("loadedmetadata", () => {
+      startQrScanning();
+      setStatus(
+        "Trzymaj kartę z kodem QR przed kamerą, aż zostanie odczytany.",
+        ""
+      );
+    });
   } catch (err) {
     console.error("Błąd przy dostępie do kamery:", err);
     setStatus(
@@ -32,6 +44,61 @@ function setStatus(text, type = "") {
   } else if (type === "error") {
     statusMessage.classList.add("error");
     overlay.classList.add("error");
+  }
+}
+
+function startQrScanning() {
+  if (qrScanInterval) return; // już skanujemy
+
+  if (typeof jsQR === "undefined") {
+    console.error("Biblioteka jsQR nie została załadowana.");
+    setStatus(
+      "Nie udało się załadować biblioteki do skanowania kodów QR (jsQR). Sprawdź połączenie z Internetem lub blokery skryptów i odśwież stronę.",
+      "error"
+    );
+    return;
+  }
+
+  const ctx = canvas.getContext("2d");
+
+  qrScanInterval = setInterval(() => {
+    if (
+      !video.videoWidth ||
+      !video.videoHeight ||
+      video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA
+    ) {
+      return;
+    }
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    try {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+      if (code && code.data) {
+        scannedQrCode = code.data.trim();
+        qrInput.value = scannedQrCode;
+        stopQrScanning();
+        startBtn.disabled = false;
+        setStatus(
+          `Zeskanowano kod QR: ${scannedQrCode}. Teraz ustaw twarz w kadrze i kliknij „Rozpocznij weryfikację”.`,
+          ""
+        );
+      }
+    } catch (e) {
+      console.error("Błąd przy odczycie kodu QR:", e);
+    }
+  }, 500);
+}
+
+function stopQrScanning() {
+  if (qrScanInterval) {
+    clearInterval(qrScanInterval);
+    qrScanInterval = null;
   }
 }
 
@@ -63,9 +130,12 @@ function captureFrames(durationMs = 2500, fps = 8) {
 }
 
 async function handleVerification() {
-  const qrCode = qrInput.value.trim();
+  const qrCode = (scannedQrCode || qrInput.value || "").trim();
   if (!qrCode) {
-    setStatus("Wprowadź najpierw kod QR użytkownika.", "error");
+    setStatus(
+      "Najpierw zeskanuj kod QR, trzymając go wyraźnie przed kamerą.",
+      "error"
+    );
     return;
   }
 
@@ -113,7 +183,20 @@ async function handleVerification() {
     console.error("Błąd przy wywołaniu /verify:", err);
     setStatus("Błąd połączenia z serwerem weryfikacji.", "error");
   } finally {
+    // Pozwól użytkownikowi zobaczyć wynik (sukces / błąd) – nie nadpisujemy komunikatu od razu
     startBtn.disabled = false;
+
+    // Po krótkiej pauzie przygotuj system na kolejnego pracownika
+    setTimeout(() => {
+      scannedQrCode = null;
+      qrInput.value = "";
+      startBtn.disabled = true;
+      setStatus(
+        "Gotowe. Teraz możesz zeskanować kolejny kod QR, trzymając go przed kamerą.",
+        ""
+      );
+      startQrScanning();
+    }, 3000); // 3 sekund na przeczytanie komunikatu
   }
 }
 
