@@ -22,6 +22,47 @@ def _decode_base64_to_rgb(b64_string: str) -> np.ndarray:
     return rgb
 
 
+def _decode_bytes_to_rgb(image_bytes: bytes) -> np.ndarray:
+    """
+    Dekoduje bytes (np. z uploadu) do RGB (numpy array) albo None.
+    """
+    try:
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if bgr is None:
+            return None
+        rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+        return rgb
+    except Exception:
+        return None
+
+
+def extract_face_encoding_from_rgb(rgb_image: np.ndarray) -> str:
+    """
+    Zwraca face encoding jako JSON string (lista floatów) lub rzuca ValueError.
+    """
+    if rgb_image is None:
+        raise ValueError("Nie udało się zdekodować obrazu.")
+
+    boxes = face_recognition.face_locations(rgb_image)
+    encodings = face_recognition.face_encodings(rgb_image, boxes)
+    if not encodings:
+        raise ValueError("Nie wykryto twarzy na obrazie.")
+
+    encoding = encodings[0]
+    return json.dumps(encoding.tolist())
+
+
+def extract_face_encoding_from_base64_image(b64_string: str) -> str:
+    rgb = _decode_base64_to_rgb(b64_string)
+    return extract_face_encoding_from_rgb(rgb)
+
+
+def extract_face_encoding_from_image_bytes(image_bytes: bytes) -> str:
+    rgb = _decode_bytes_to_rgb(image_bytes)
+    return extract_face_encoding_from_rgb(rgb)
+
+
 def compare_face_with_user(db_path: str, user_row: Dict[str, Any], frame_b64: str) -> bool:
     """
     Pobiera zakodowaną twarz użytkownika z DB i porównuje z twarzą

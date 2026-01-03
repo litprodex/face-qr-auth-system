@@ -150,6 +150,9 @@ async function handleVerification() {
 
     setStatus("Analizuję mrugnięcie i tożsamość, proszę czekać...");
 
+    const directionEl = document.querySelector('input[name="direction"]:checked');
+    const direction = directionEl ? directionEl.value : "IN";
+
     const res = await fetch("/verify", {
       method: "POST",
       headers: {
@@ -158,6 +161,7 @@ async function handleVerification() {
       body: JSON.stringify({
         qr_code: qrCode,
         frames,
+        direction,
       }),
     });
 

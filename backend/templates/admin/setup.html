@@ -1,0 +1,37 @@
+{% extends "admin/_layout.html" %} {% block content %}
+<section class="card auth-card">
+  <h1>Konfiguracja hasła administratora</h1>
+  <p class="muted">
+    To wygląda na pierwsze uruchomienie. Ustaw hasło do panelu admina (system
+    zapisze tylko jego hash).
+  </p>
+
+  <form method="post" class="form">
+    <label class="label" for="password">Nowe hasło</label>
+    <input
+      class="input"
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="new-password"
+      required
+    />
+
+    <label class="label" for="confirm">Powtórz hasło</label>
+    <input
+      class="input"
+      id="confirm"
+      name="confirm"
+      type="password"
+      autocomplete="new-password"
+      required
+    />
+
+    <button class="btn" type="submit">Ustaw hasło</button>
+  </form>
+
+  <p class="muted small">Wskazówka: użyj minimum 8 znaków.</p>
+</section>
+{% endblock %}
+
+

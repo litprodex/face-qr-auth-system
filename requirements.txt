@@ -3,5 +3,5 @@ face-recognition
 opencv-python
 mediapipe
 numpy
-
-
+qrcode[pil]
+reportlab

@@ -1,0 +1,30 @@
+{% extends "admin/_layout.html" %} {% block content %}
+<section class="card auth-card">
+  <h1>Logowanie administratora</h1>
+  <p class="muted">
+    Dostęp do panelu jest chroniony hasłem (przechowywany jest tylko hash).
+  </p>
+
+  <form method="post" class="form">
+    <label class="label" for="password">Hasło</label>
+    <input
+      class="input"
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="current-password"
+      required
+      autofocus
+    />
+
+    <button class="btn" type="submit">Zaloguj</button>
+  </form>
+
+  <p class="muted small">
+    Jeśli to pierwsze uruchomienie i hasło nie zostało ustawione, system
+    przekieruje do konfiguracji.
+  </p>
+</section>
+{% endblock %}
+
+

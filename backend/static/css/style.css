@@ -116,6 +116,36 @@ input[type="text"]:focus {
   background: #020617;
 }
 
+.mode {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.radio-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #020617;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.radio-pill input {
+  accent-color: var(--accent);
+}
+
 button {
   margin-top: 4px;
   padding: 10px 16px;

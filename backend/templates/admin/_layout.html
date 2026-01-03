@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or "Panel administracyjny" }}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin.css') }}"
+    />
+  </head>
+  <body>
+    <div class="admin-shell">
+      <header class="admin-header">
+        <div class="brand">
+          <a href="{{ url_for('admin_employees') }}">Panel administracyjny</a>
+        </div>
+
+        {% if session.get('admin_logged_in') %}
+        <nav class="nav">
+          <a href="{{ url_for('admin_employees') }}">Pracownicy</a>
+          <a href="{{ url_for('admin_reports') }}">Raporty</a>
+          <a href="{{ url_for('admin_logout') }}">Wyloguj</a>
+        </nav>
+        {% endif %}
+      </header>
+
+      <main class="admin-main">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="alerts">
+          {% for category, msg in messages %}
+          <div class="alert {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </body>
+</html>
+
+

@@ -1,4 +1,3 @@
-   # przykład – dopasuj ścieżki do siebie
 import os
 from backend.face_utils import add_user_with_image
 
@@ -7,10 +6,9 @@ db_path = os.path.join(base_dir, "backend", "database.sqlite3")
 
 user_id = add_user_with_image(
     db_path=db_path,
-    name="username",
-    qr_code="qr_number_code",           
-    image_path=r"C:\Users\mateo\OneDrive\Pulpit\face-qr-auth-system\image.jpg"
+    name="Mati A",
+    qr_code="MATI123",              # to będzie treść Twojego kodu QR
+    image_path=r"C:\Users\mateo\OneDrive\Pulpit\face-qr-auth-system\mati.jpg"
 )
-
 
 print("Dodano usera o ID:", user_id)

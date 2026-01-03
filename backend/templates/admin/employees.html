@@ -1,0 +1,119 @@
+{% extends "admin/_layout.html" %} {% block content %}
+<div class="page-head">
+  <div>
+    <h1>Pracownicy</h1>
+    <p class="muted">
+      Dodawanie pracownika tworzy wektor twarzy (face encoding) — nie zapisujemy
+      zdjęcia twarzy jako pliku. Kod QR jest generowany z ID pracownika.
+    </p>
+  </div>
+</div>
+
+{% if created_user %}
+<section class="card highlight">
+  <h2>Nowy pracownik dodany</h2>
+  <div class="kv">
+    <div><span class="k">ID</span><span class="v">{{ created_user.id }}</span></div>
+    <div><span class="k">Imię i nazwisko</span><span class="v">{{ created_user.name }}</span></div>
+    <div><span class="k">QR (payload)</span><span class="v mono">{{ created_user.qr_code }}</span></div>
+    <div>
+      <span class="k">Pobierz QR</span>
+      <span class="v"
+        ><a class="btn small" href="{{ url_for('admin_employee_qr_png', user_id=created_user.id) }}"
+          >qr_pracownik_{{ created_user.id }}.png</a
+        ></span
+      >
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="grid">
+  <section class="card">
+    <h2>Dodaj nowego pracownika</h2>
+
+    <form method="post" enctype="multipart/form-data" class="form" id="addEmployeeForm">
+      <div class="two-col">
+        <div>
+          <label class="label" for="first_name">Imię</label>
+          <input class="input" id="first_name" name="first_name" type="text" required />
+        </div>
+        <div>
+          <label class="label" for="last_name">Nazwisko</label>
+          <input class="input" id="last_name" name="last_name" type="text" required />
+        </div>
+      </div>
+
+      <label class="label" for="qr_expires_at">Ważność QR do (np. koniec umowy)</label>
+      <input class="input" id="qr_expires_at" name="qr_expires_at" type="date" required />
+
+      <div class="divider"></div>
+
+      <label class="label" for="face_image">Obraz twarzy (plik)</label>
+      <input class="input file" id="face_image" name="face_image" type="file" accept="image/*" />
+
+      <p class="muted small">
+        Alternatywnie: możesz zrobić zdjęcie z kamery (zostanie wysłane jako base64, ale w bazie
+        zapisujemy tylko wektor twarzy).
+      </p>
+
+      <input type="hidden" name="face_image_b64" id="faceImageB64" />
+
+      <div class="camera">
+        <div class="camera-box">
+          <video id="adminCamera" autoplay playsinline muted></video>
+          <img id="snapPreview" alt="Podgląd zdjęcia" />
+        </div>
+        <div class="camera-actions">
+          <button class="btn secondary" type="button" id="startCamBtn">Włącz kamerę</button>
+          <button class="btn secondary" type="button" id="snapBtn" disabled>Zrób zdjęcie</button>
+          <button class="btn secondary" type="button" id="clearSnapBtn" disabled>Wyczyść</button>
+        </div>
+      </div>
+
+      <button class="btn" type="submit">Dodaj pracownika</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+  </section>
+
+  <section class="card">
+    <h2>Lista pracowników</h2>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Imię i nazwisko</th>
+            <th>Ważność QR</th>
+            <th>QR (payload)</th>
+            <th>Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td class="mono">{{ u.id }}</td>
+            <td>{{ u.name }}</td>
+            <td class="mono">{{ u.qr_expires_at or "-" }}</td>
+            <td class="mono">{{ u.qr_code }}</td>
+            <td>
+              <a class="btn small" href="{{ url_for('admin_employee_qr_png', user_id=u.id) }}"
+                >Pobierz QR</a
+              >
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="muted">Brak pracowników w bazie.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+

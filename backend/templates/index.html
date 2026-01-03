@@ -26,6 +26,20 @@
             readonly
           />
 
+          <div class="mode">
+            <label>Tryb rejestracji:</label>
+            <div class="radio-group" role="radiogroup" aria-label="Tryb rejestracji">
+              <label class="radio-pill">
+                <input type="radio" name="direction" value="IN" checked />
+                <span>Wejście</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="direction" value="OUT" />
+                <span>Wyjście</span>
+              </label>
+            </div>
+          </div>
+
           <button id="startVerificationBtn" disabled>Rozpocznij weryfikację</button>
 
           <p id="statusMessage" class="status-message">
