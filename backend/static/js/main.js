@@ -202,9 +202,29 @@ async function handleVerification() {
 
 startBtn.addEventListener("click", handleVerification);
 
+// Sprawdź protokół i poinformuj użytkownika jeśli używa HTTP w LAN
+function checkProtocol() {
+  const isLocalhost = 
+    location.hostname === 'localhost' || 
+    location.hostname === '127.0.0.1' || 
+    location.hostname === '[::1]';
+  
+  if (location.protocol !== 'https:' && !isLocalhost) {
+    setStatus(
+      '⚠️ Aplikacja wymaga HTTPS do działania kamery w sieci lokalnej. ' +
+      'Użyj https://' + location.hostname + ':5000',
+      'error'
+    );
+    return false;
+  }
+  return true;
+}
+
 window.addEventListener("load", () => {
-  initCamera();
-  setStatus("Ustaw twarz w ramce i przygotuj się do mrugnięcia.");
+  if (checkProtocol()) {
+    initCamera();
+    setStatus("Ustaw twarz w ramce i przygotuj się do mrugnięcia.");
+  }
 });
 
 

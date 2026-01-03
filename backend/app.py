@@ -105,7 +105,38 @@ def create_app():
 
 
 if __name__ == "__main__":
+    import ssl
+    
     app = create_app()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    
+    # Ścieżki do certyfikatów
+    cert_path = os.path.join(base_dir, 'cert.pem')
+    key_path = os.path.join(base_dir, 'key.pem')
+    
+    # Sprawdź czy certyfikaty istnieją
+    if os.path.exists(cert_path) and os.path.exists(key_path):
+        try:
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(cert_path, key_path)
+            print("🔒 Uruchamianie serwera z HTTPS...")
+            print(f"   Aplikacja dostępna pod: https://0.0.0.0:5000")
+            print(f"   W sieci lokalnej użyj: https://[TWOJE_IP]:5000")
+            print("   ⚠️  Po pierwszym wejściu zaakceptuj certyfikat w przeglądarce")
+            app.run(host="0.0.0.0", port=5000, ssl_context=context, debug=True)
+        except Exception as e:
+            print(f"❌ Błąd przy ładowaniu certyfikatów: {e}")
+            print("   Uruchamiam w trybie HTTP (kamera nie będzie działać w LAN)")
+            app.run(host="0.0.0.0", port=5000, debug=True)
+    else:
+        print("⚠️  Certyfikaty SSL nie znalezione.")
+        print(f"   Certyfikaty powinny być w: {base_dir}")
+        print("   Uruchamiam w trybie HTTP (kamera nie będzie działać w sieci lokalnej)")
+        print("\n   Aby wygenerować certyfikaty, uruchom:")
+        print(f"   python {os.path.join(base_dir, 'generate_cert.py')}")
+        print("   lub")
+        print(f"   openssl req -x509 -newkey rsa:4096 -nodes -out {cert_path} -keyout {key_path} -days 365 -subj \"/CN=localhost\"")
+        print()
+        app.run(host="0.0.0.0", port=5000, debug=True)
 
 

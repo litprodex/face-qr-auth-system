@@ -75,6 +75,12 @@ coverage.xml
 *.db
 backend/database.sqlite3
 
+# SSL Certificates
+*.pem
+!*.pem.example
+backend/cert.pem
+backend/key.pem
+
 # Logs and temp
 logs/
 tmp/
