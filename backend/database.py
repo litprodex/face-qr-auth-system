@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 from typing import Optional, Dict, Any, List, Tuple
 from uuid import uuid4
 
@@ -28,6 +29,57 @@ def init_db(db_path: str) -> None:
         );
         """
     )
+
+    # Migracja: sprawdź czy kolumny istnieją, jeśli nie - dodaj je
+    cur.execute("PRAGMA table_info(users)")
+    columns = [row[1] for row in cur.fetchall()]
+    
+    # Migracja dla first_name
+    if "first_name" not in columns:
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN first_name TEXT")
+            # Wyciągnij first_name z kolumny name (jeśli istnieje) lub ustaw domyślną wartość
+            cur.execute("UPDATE users SET first_name = CASE WHEN name IS NOT NULL AND name != '' THEN SUBSTR(name, 1, INSTR(name || ' ', ' ') - 1) ELSE 'Pracownik' END WHERE first_name IS NULL")
+        except sqlite3.OperationalError:
+            pass
+    
+    # Migracja dla last_name
+    if "last_name" not in columns:
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN last_name TEXT")
+            # Wyciągnij last_name z kolumny name (jeśli istnieje) lub ustaw domyślną wartość
+            cur.execute("UPDATE users SET last_name = CASE WHEN name IS NOT NULL AND name != '' AND INSTR(name, ' ') > 0 THEN SUBSTR(name, INSTR(name, ' ') + 1) ELSE '' END WHERE last_name IS NULL")
+        except sqlite3.OperationalError:
+            pass
+    
+    # Migracja dla qr_expires_at
+    if "qr_expires_at" not in columns:
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN qr_expires_at TEXT")
+            # Ustaw domyślną wartość dla istniejących rekordów (np. bardzo odległą datę)
+            cur.execute("UPDATE users SET qr_expires_at = '2099-12-31T23:59:59' WHERE qr_expires_at IS NULL")
+        except sqlite3.OperationalError:
+            pass
+    
+    # Migracja dla created_at
+    if "created_at" not in columns:
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN created_at TEXT")
+            # Ustaw domyślną wartość dla istniejących rekordów (aktualna data)
+            default_date = datetime.utcnow().replace(microsecond=0).isoformat()
+            cur.execute("UPDATE users SET created_at = ? WHERE created_at IS NULL", (default_date,))
+        except sqlite3.OperationalError:
+            pass
+    
+    # Migracja dla updated_at
+    if "updated_at" not in columns:
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN updated_at TEXT")
+            # Ustaw domyślną wartość dla istniejących rekordów (aktualna data)
+            default_date = datetime.utcnow().replace(microsecond=0).isoformat()
+            cur.execute("UPDATE users SET updated_at = ? WHERE updated_at IS NULL", (default_date,))
+        except sqlite3.OperationalError:
+            pass
 
     cur.execute(
         "CREATE INDEX IF NOT EXISTS idx_users_qr_code ON users (qr_code)"
